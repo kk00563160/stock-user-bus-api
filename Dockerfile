@@ -29,4 +29,4 @@ RUN npm run build
 
 
 # Run the web service on container startup.
-CMD [ "npm", "run", "start:stock-user-api" ]
+CMD [ "npm", "run", "start:stock-user" ]
