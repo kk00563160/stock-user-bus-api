@@ -27,19 +27,17 @@ export class HttpClient {
       console.log("Enter into production Block")
       const tokenObservable = this.getIdentityToken(baseUrl);
       console.log(tokenObservable)
-      await tokenObservable.subscribe(response => {
-        var token = response.data;
-        console.log("token :", token)
-
+      var token = await (await lastValueFrom(this.httpService.post(baseUrl + url, data))).data;
+      
         const requestConfig: AxiosRequestConfig = {
           headers: {
             'Authorization': `Bearer ${token}`,
           }
         }
 
-        responsedata = this.httpService.post(baseUrl + url, data).pipe(map(resp => (resp.data)));
+        responsedata = await lastValueFrom(this.httpService.post(baseUrl + url, data, requestConfig));
 
-      });
+
     } else {
       console.log("Enter into Dev Block", baseUrl + url)
       responsedata = await lastValueFrom(this.httpService.post(baseUrl + url, data));
