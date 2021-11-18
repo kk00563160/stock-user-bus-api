@@ -8,6 +8,7 @@ FROM node:12-alpine
 ENV MODE=PROD
 ENV API_GATEWAY_PORT=8001
 ENV MASTER_BASE_URL="https://user-busservice-ti5nf7kn3a-ew.a.run.app/"
+ENV GCP_IDENTITY_TOKEN_URL="http://metadata/computeMetadata/v1/instance/service-accounts/default/identity"
 
 # Create and change to the app directory.
 WORKDIR /usr/src/app
