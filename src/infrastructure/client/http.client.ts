@@ -27,7 +27,7 @@ export class HttpClient {
       console.log("Enter into production Block")
       const tokenObservable = this.getIdentityToken(baseUrl);
       console.log(tokenObservable)
-      var token = await (await lastValueFrom(this.httpService.post(baseUrl + url, data))).data;
+      var token = await (await lastValueFrom(tokenObservable)).data;
       
         const requestConfig: AxiosRequestConfig = {
           headers: {
