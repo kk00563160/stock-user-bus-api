@@ -11,9 +11,9 @@ export default class CreateUserInfo implements IBaseService<UserModel, LoginStat
 
     async handle(userModel: UserModel): Promise<LoginStatus> {
         let date: Date = new Date();
-        if (userModel.userLogin === 'login') {
-            userModel.loginDate = date;
-        }
+       
+        userModel.loginDate = date;
+        
         const responseObject = await this.httpclient.post('getUserInfo', userModel);
 
          console.log("response obj",responseObject)

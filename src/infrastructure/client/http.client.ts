@@ -111,6 +111,38 @@ export class HttpClient {
     return responsedata;
   }
 
+  public async delete(url: string) {
+
+    let responsedata: any
+    var baseUrl = ConfigService.create().getBaseURl(UserSettingConstants.MASTER_BASE_URL)
+
+    console.log("URl :", baseUrl + url)
+    var env = ConfigService.create().isProduction();
+    if (env) {
+
+      console.log("Enter into production Block")
+      const tokenObservable = this.getIdentityToken(baseUrl);
+      console.log(tokenObservable)
+      var token = await (await lastValueFrom(tokenObservable)).data;
+      
+        const requestConfig: AxiosRequestConfig = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          }
+        }
+
+        responsedata = await lastValueFrom(this.httpService.delete(baseUrl + url,requestConfig));
+
+
+    } else {
+      console.log("Enter into Dev Block", baseUrl + url)
+      responsedata = await lastValueFrom(this.httpService.delete(baseUrl + url));
+    }
+    console.log(responsedata.data)
+    return responsedata.data;
+  }
+
+
   private getIdentityToken(recipientUrl) {
     /*if (
       process.env.GCP_IDENTITY_TOKEN &&

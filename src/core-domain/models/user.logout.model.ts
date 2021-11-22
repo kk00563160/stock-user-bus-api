@@ -1,6 +1,6 @@
 export class UserLogoutModel {
     constructor(public userId: string, public browser: string, public machineId: string,
-        public shopId: number, public userLogout: string, public logoutDate: Date) { }
+        public shopId: number, public loginDate: Date, public logoutDate: Date) { }
 }
 
 
