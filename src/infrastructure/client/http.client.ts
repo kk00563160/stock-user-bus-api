@@ -27,15 +27,15 @@ export class HttpClient {
       console.log("Enter into production Block")
       const tokenObservable = this.getIdentityToken(baseUrl);
       console.log(tokenObservable)
-      var token = await (await lastValueFrom(tokenObservable)).data;
-      
-        const requestConfig: AxiosRequestConfig = {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          }
-        }
+      var token = tokenObservable;
 
-        responsedata = await lastValueFrom(this.httpService.post(baseUrl + url, data, requestConfig));
+      const requestConfig: AxiosRequestConfig = {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      }
+
+      responsedata = await lastValueFrom(this.httpService.post(baseUrl + url, data, requestConfig));
 
 
     } else {
@@ -44,39 +44,6 @@ export class HttpClient {
     }
     console.log(responsedata.data)
     return responsedata.data;
-  }
-
-  public async patch(url: string, data: any) {
-
-    let responsedata: any
-    var baseUrl = ConfigService.create().getBaseURl(UserSettingConstants.MASTER_BASE_URL)
-
-    console.log("URl :", baseUrl + url)
-    var env = ConfigService.create().isProduction();
-    if (env) {
-
-      console.log("Enter into production Block")
-      const tokenObservable = this.getIdentityToken(baseUrl);
-      console.log(tokenObservable)
-      await tokenObservable.subscribe(response => {
-        var token = response.data;
-        console.log("token :", token)
-
-        const requestConfig: AxiosRequestConfig = {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          }
-        }
-
-        responsedata = this.httpService.patch(baseUrl + url, data).pipe(map(resp => (resp.data)));
-
-      });
-    } else {
-      console.log("Enter into Dev Block")
-      responsedata = this.httpService.patch(baseUrl + url, data).pipe(map(resp => (resp.data)));
-    }
-    console.log(responsedata)
-    return responsedata;
   }
 
   public async get(url: string, data: any) {
@@ -91,21 +58,20 @@ export class HttpClient {
       console.log("Enter into production Block")
       const tokenObservable = this.getIdentityToken(baseUrl);
       console.log(tokenObservable)
-      await tokenObservable.subscribe(response => {
-        var token = response.data;
-        console.log("token :", token)
 
-        const requestConfig: AxiosRequestConfig = {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          }
+      const requestConfig: AxiosRequestConfig = {
+        headers: {
+          'Authorization': `Bearer ${tokenObservable}`,
         }
+      }
 
-        responsedata = this.httpService.get(baseUrl + url, data).pipe(map(resp => (resp.data)));
-      });
+
+      responsedata = await lastValueFrom(this.httpService.get(baseUrl + url, requestConfig));
+
+
     } else {
       console.log("Enter into Dev Block")
-      responsedata = this.httpService.get(baseUrl + url, data).pipe(map(resp => (resp.data)));
+      responsedata = await lastValueFrom(this.httpService.get(baseUrl + url));
     }
     console.log(responsedata)
     return responsedata;
@@ -123,15 +89,15 @@ export class HttpClient {
       console.log("Enter into production Block")
       const tokenObservable = this.getIdentityToken(baseUrl);
       console.log(tokenObservable)
-      var token = await (await lastValueFrom(tokenObservable)).data;
-      
-        const requestConfig: AxiosRequestConfig = {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          }
-        }
+      var token = await (tokenObservable);
 
-        responsedata = await lastValueFrom(this.httpService.delete(baseUrl + url,requestConfig));
+      const requestConfig: AxiosRequestConfig = {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      }
+
+      responsedata = await lastValueFrom(this.httpService.delete(baseUrl + url, requestConfig));
 
 
     } else {
@@ -142,18 +108,18 @@ export class HttpClient {
     return responsedata.data;
   }
 
-  private  isActive  (jwt :any)  {
+  private isActive(jwt: any) {
     const milliseconds = 1000;
-  
+
     const payload = jwt.split('.')[1];
     const jsonPayload = Buffer.from(payload, 'base64').toString('utf-8');
     const { exp } = JSON.parse(jsonPayload);
     const now = Math.ceil(new Date().getTime() / milliseconds);
-  
+
     return now < exp;
   };
 
-   private async getIdentityToken(recipientUrl) {
+  private async getIdentityToken(recipientUrl) {
     if (
       process.env.GCP_IDENTITY_TOKEN &&
       this.isActive(process.env.GCP_IDENTITY_TOKEN)
@@ -168,7 +134,7 @@ export class HttpClient {
         'metadata-flavor': 'Google',
       }
     }
-    const data =  await lastValueFrom (this.httpService.get(process.env.GCP_IDENTITY_TOKEN_URL, requestConfig));
+    const data = await lastValueFrom(this.httpService.get(process.env.GCP_IDENTITY_TOKEN_URL, requestConfig));
 
     process.env.GCP_IDENTITY_TOKEN = data.data
 
