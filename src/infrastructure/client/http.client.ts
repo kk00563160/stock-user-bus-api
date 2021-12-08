@@ -119,7 +119,7 @@ export class HttpClient {
     return now < exp;
   };
 
-  private async getIdentityToken(recipientUrl) {
+  private getIdentityToken(recipientUrl) {
     if (
       process.env.GCP_IDENTITY_TOKEN &&
       this.isActive(process.env.GCP_IDENTITY_TOKEN)
