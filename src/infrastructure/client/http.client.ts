@@ -142,14 +142,24 @@ export class HttpClient {
     return responsedata.data;
   }
 
+  private  isActive  (jwt :any)  {
+    const milliseconds = 1000;
+  
+    const payload = jwt.split('.')[1];
+    const jsonPayload = Buffer.from(payload, 'base64').toString('utf-8');
+    const { exp } = JSON.parse(jsonPayload);
+    const now = Math.ceil(new Date().getTime() / milliseconds);
+  
+    return now < exp;
+  };
 
-  private getIdentityToken(recipientUrl) {
-    /*if (
+   private async getIdentityToken(recipientUrl) {
+    if (
       process.env.GCP_IDENTITY_TOKEN &&
-      isActive(process.env.GCP_IDENTITY_TOKEN)
+      this.isActive(process.env.GCP_IDENTITY_TOKEN)
     ) {
       return process.env.GCP_IDENTITY_TOKEN;
-    }*/
+    }
     const requestConfig: AxiosRequestConfig = {
       params: {
         audience: recipientUrl,
@@ -158,7 +168,14 @@ export class HttpClient {
         'metadata-flavor': 'Google',
       }
     }
-    return this.httpService.get(process.env.GCP_IDENTITY_TOKEN_URL, requestConfig);
+    const data =  await lastValueFrom (this.httpService.get(process.env.GCP_IDENTITY_TOKEN_URL, requestConfig));
+
+    process.env.GCP_IDENTITY_TOKEN = data.data
+
+    console.log(process.env.GCP_IDENTITY_TOKEN)
+
+    return data.data
+
   }
 
 }
