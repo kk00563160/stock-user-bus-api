@@ -26,7 +26,7 @@ export class HttpClient {
 
       console.log("Enter into production Block")
       const tokenObservable = this.getIdentityToken(baseUrl);
-      console.log(tokenObservable)
+      console.log('tokenObservable',tokenObservable)
       var token = tokenObservable;
 
       const requestConfig: AxiosRequestConfig = {
@@ -36,13 +36,13 @@ export class HttpClient {
       }
 
       responsedata = await lastValueFrom(this.httpService.post(baseUrl + url, data, requestConfig));
-
+    
 
     } else {
       console.log("Enter into Dev Block", baseUrl + url)
       responsedata = await lastValueFrom(this.httpService.post(baseUrl + url, data));
     }
-    console.log(responsedata.data)
+    console.log('responsedata',responsedata.data)
     return responsedata.data;
   }
 
@@ -134,11 +134,12 @@ export class HttpClient {
         'metadata-flavor': 'Google',
       }
     }
+    console.log('recipientUrl',recipientUrl)
     const data = await lastValueFrom(this.httpService.get(process.env.GCP_IDENTITY_TOKEN_URL, requestConfig));
 
     process.env.GCP_IDENTITY_TOKEN = data.data
 
-    console.log(process.env.GCP_IDENTITY_TOKEN)
+    console.log('process.env.GCP_IDENTITY_TOKEN',process.env.GCP_IDENTITY_TOKEN)
 
     return data.data
 
