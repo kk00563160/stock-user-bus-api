@@ -25,7 +25,7 @@ export class HttpClient {
     if (env) {
 
       console.log("Enter into production Block")
-      const tokenObservable = this.getIdentityToken(baseUrl);
+      const tokenObservable =await this.getIdentityToken(baseUrl);
       console.log('tokenObservable',tokenObservable)
       var token = tokenObservable;
 
@@ -119,7 +119,7 @@ export class HttpClient {
     return now < exp;
   };
 
-  private getIdentityToken(recipientUrl) {
+  private async getIdentityToken(recipientUrl) {
     if (
       process.env.GCP_IDENTITY_TOKEN &&
       this.isActive(process.env.GCP_IDENTITY_TOKEN)
